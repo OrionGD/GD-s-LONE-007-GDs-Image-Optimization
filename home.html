@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Image Resizer & Optimizer</title>
+	    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Image Resizer & Compressor</h2>
+
+        <div class="drop-zone" id="dropZone">Drag & Drop or Click to Upload Image</div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+        <img id="preview" style="display:none;" alt="Image Preview">
+
+        <div id="imageInfo" class="image-info" style="display:none;"></div>
+
+        <label><h2>Resolution</h2>
+            <input type="text" id="resolutionInput" placeholder="e.g., 1280x720 (Leave empty for original)">
+        </label>
+
+        <label>
+          <center><input type="checkbox" id="aspectRatioCheckbox"> <h2>Maintain Aspect Ratio</h2></center>
+        </label>
+
+  <div class="slider-container">
+    <h2><label>Quality:
+        <input type="range" id="qualitySlider" min="10" max="100" value="80">
+    </label>
+
+    <label>Brightness:
+        <input type="range" id="brightnessSlider" min="-100" max="100" value="0">
+    </label>
+
+    <label>Contrast:
+        <input type="range" id="contrastSlider" min="-100" max="100" value="0">
+    </label></h2>
+
+  <center>  <div class="slider-values">
+       <span id="qualityValue">80%</span> |
+        <span id="brightnessValue">0</span> |
+        <span id="contrastValue">0</span>
+    </div></center>
+</div>
+
+        <label><center><h3>Output Format<h3></center>
+            <select id="formatSelect">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/jpeg">JPG</option>
+            </select>
+        </label>
+
+        <button id="resizeBtn">Resize & Compress</button>
+
+        <img id="resizedPreview" style="display:none;" alt="Resized Image Preview">
+        <div id="processedImageInfo" class="image-info" style="display:none;"></div>
+    </div>
+
+    <script src="script.js"></script>
+<footer style="position: fixed; left: 0; bottom: 0; width: 100%; text-align: center; border-top: 2px ; padding: 5px 0; ">
+    <img src="images/footer.png" alt="Logo" style="height: 30px; width: 60px;">
+</footer>
+
+</body>
+
+</html>

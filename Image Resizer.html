@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Image Resizer & Optimizer</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <styles>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.slider-values {
+    display: flex;
+    gap: 20px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+body {
+    font-family: Times New Roman, sans-serif;
+    background: url('images/Wings.png') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: white;
+    padding: 10px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    max-width: 500px;
+    width: 100%;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.drop-zone {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px dashed rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+input, select, button, label {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+input[type="text"], select {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+input[type="range"] {
+    cursor: pointer;
+}
+
+button {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+::placeholder {
+    color: white;
+    opacity: 0.7;
+}
+
+option {
+    background-color: black;
+}
+
+.image-info {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #ffffffcc;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+}
+
+
+    </styles>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Image Resizer & Compressor</h2>
+
+        <div class="drop-zone" id="dropZone">Drag & Drop or Click to Upload Image</div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+        <img id="preview" style="display:none;" alt="Image Preview">
+
+        <div id="imageInfo" class="image-info" style="display:none;"></div>
+
+        <label><h2>Resolution</h2>
+            <input type="text" id="resolutionInput" placeholder="e.g., 1280x720 (Leave empty for original)">
+        </label>
+
+        <label>
+          <center><input type="checkbox" id="aspectRatioCheckbox"> <h2>Maintain Aspect Ratio</h2></center>
+        </label>
+
+  <div class="slider-container">
+    <h2><label>Quality:
+        <input type="range" id="qualitySlider" min="10" max="100" value="80">
+    </label>
+
+    <label>Brightness:
+        <input type="range" id="brightnessSlider" min="-100" max="100" value="0">
+    </label>
+
+    <label>Contrast:
+        <input type="range" id="contrastSlider" min="-100" max="100" value="0">
+    </label></h2>
+
+  <center>  <div class="slider-values">
+       <span id="qualityValue">80%</span> |
+        <span id="brightnessValue">0</span> |
+        <span id="contrastValue">0</span>
+    </div></center>
+</div>
+
+        <label><center><h3>Output Format<h3></center>
+            <select id="formatSelect">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/jpeg">JPG</option>
+            </select>
+        </label>
+
+        <button id="resizeBtn">Resize & Compress</button>
+
+        <img id="resizedPreview" style="display:none;" alt="Resized Image Preview">
+        <div id="processedImageInfo" class="image-info" style="display:none;"></div>
+    </div>
+
+
+<footer style="position: fixed; left: 0; bottom: 0; width: 100%; text-align: center; border-top: 2px ; padding: 5px 0; ">
+    <img src="images/footer.png" alt="Logo" style="height: 30px; width: 60px;">
+</footer>
+
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const resizedPreview = document.getElementById('resizedPreview');
+const resolutionInput = document.getElementById('resolutionInput');
+const aspectRatioCheckbox = document.getElementById('aspectRatioCheckbox');
+const qualitySlider = document.getElementById('qualitySlider');
+const qualityValue = document.getElementById('qualityValue');
+const formatSelect = document.getElementById('formatSelect');
+const resizeBtn = document.getElementById('resizeBtn');
+const imageInfo = document.getElementById('imageInfo');
+const processedImageInfo = document.getElementById('processedImageInfo');
+
+// Brightness & Contrast Sliders
+const brightnessSlider = document.getElementById('brightnessSlider');
+const contrastSlider = document.getElementById('contrastSlider');
+const brightnessValue = document.getElementById('brightnessValue');
+const contrastValue = document.getElementById('contrastValue');
+
+let originalImage = null;
+let originalFileName = '';
+
+dropZone.onclick = () => fileInput.click();
+
+dropZone.addEventListener('dragover', (e) => e.preventDefault());
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    handleImageUpload();
+});
+
+fileInput.onchange = handleImageUpload;
+
+function handleImageUpload() {
+    const file = fileInput.files[0];
+    if (!file || !file.type.startsWith('image/')) return alert('Invalid file type');
+
+    originalFileName = file.name.split('.').slice(0, -1).join('.');
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        originalImage = new Image();
+        originalImage.src = e.target.result;
+        originalImage.onload = () => {
+            preview.src = originalImage.src;
+            preview.style.display = 'block';
+            imageInfo.style.display = 'block';
+
+            imageInfo.innerHTML = `
+                <strong>Original Image Info:</strong><br>
+                Resolution: ${originalImage.width} x ${originalImage.height} px<br>
+                Size: ${(file.size / 1024).toFixed(2)} KB<br>
+                Format: ${file.type}
+            `;
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
+qualitySlider.oninput = () => {
+    qualityValue.textContent = qualitySlider.value + '%';
+};
+
+brightnessSlider.oninput = () => {
+    brightnessValue.textContent = brightnessSlider.value;
+};
+
+contrastSlider.oninput = () => {
+    contrastValue.textContent = contrastSlider.value;
+};
+
+resizeBtn.onclick = () => {
+    if (!originalImage) {
+        alert('Please upload an image first!');
+        return;
+    }
+
+    const [widthInput, heightInput] = (resolutionInput.value || '').split('x').map(v => parseInt(v.trim()));
+    let width = widthInput || originalImage.width;
+    let height = heightInput || originalImage.height;
+
+    if (aspectRatioCheckbox.checked && widthInput) {
+        height = Math.round(width * (originalImage.height / originalImage.width));
+    }
+
+    const brightness = parseInt(brightnessSlider.value, 10) || 0;
+    const contrast = parseInt(contrastSlider.value, 10) || 0;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // Apply brightness and contrast filters using CSS-like filter property
+    ctx.filter = `brightness(${100 + brightness}%) contrast(${100 + contrast}%)`;
+    ctx.drawImage(originalImage, 0, 0, width, height);
+
+    canvas.toBlob((blob) => {
+        const fileName = `processed_${originalFileName}.${formatSelect.value.split('/')[1]}`;
+        const url = URL.createObjectURL(blob);
+
+        resizedPreview.src = url;
+        resizedPreview.style.display = 'block';
+
+        processedImageInfo.style.display = 'block';
+        processedImageInfo.innerHTML = `
+            <strong>Processed Image Info:</strong><br>
+            Resolution: ${width} x ${height} px<br>
+            Format: ${formatSelect.value}<br>
+            Quality: ${qualitySlider.value}%<br>
+            Brightness: ${brightness}<br>
+            Contrast: ${contrast}
+        `;
+
+        // Auto-download processed image
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+
+        setTimeout(() => {
+            link.click();
+            document.body.removeChild(link);
+        }, 4000); // Download after 4 seconds
+    }, formatSelect.value, qualitySlider.value / 100);
+};
+
+
+</script>
+</body>
+
+</html>
